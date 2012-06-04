@@ -56,11 +56,15 @@ function createComposition(callback) {
 function printResults(callback) {
   print([
       descriptionCount,
-      avg(results.createComposition)
+      round(avg(results.createComposition)),
     ].join('\t'));
   callback();
 }
 
 function avg (values) {
   return values.reduce(function(a,b) { return a + b; }, 0) / values.length;
+}
+
+function round(value) {
+  return (Math.round(value * 10) + '').replace(/(\d)$/, '.$1');
 }
