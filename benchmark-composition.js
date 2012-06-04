@@ -5,9 +5,7 @@ var print = console.log,
 
 // Parse arguments
 var args = process.argv.splice(2);
-if (args.length < 1)
-  return console.error('Insufficient arguments.');
-var maxDescriptionCount = parseInt(args[0], 10);
+var maxDescriptionCount = parseInt(args[0], 10) || Math.Infinity;
 var repeats = 5;
 
 var descriptionCount = 1;
