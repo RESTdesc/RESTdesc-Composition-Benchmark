@@ -10,8 +10,10 @@ if (args[0] === '--help')
 
 var reasoner = args[0] || "eye";
 var repeats = parseInt(args[1], 10) || 5;
-var maxDescriptionCount = parseInt(args[2], 10) || Math.Infinity;
+var maxDescriptionCount = parseInt(args[2], 10) || Infinity;
 var descriptionCount = 1;
+
+print(reasoner, 'maximum', maxDescriptionCount, 'descriptions with', repeats, 'repeats');
 
 // Reasoner configuration
 var reasonerOptions = {
