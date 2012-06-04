@@ -5,8 +5,10 @@ var print = console.log;
 // Parse arguments
 var args = process.argv.splice(2);
 if (args.length < 1)
-  return console.error('Insufficient arguments.');
+  return console.error('Usage: generate-descriptions.js ' +
+                       'number_of_descriptions> [number_of_conditions]');
 var chainLength = parseInt(args[0], 10);
+var conditionCount = parseInt(args[1], 10) || 1;
 
 // Output prefixes
 var prefixes = {
@@ -23,11 +25,13 @@ print(descriptions.join('\n\n'));
 // Generates a chain of descriptions
 function generateDescriptionChain(length) {
   var descriptions = [];
-  for (var i = 1; i <= length; i++) {
+  for (var i = 1, j; i <= length; i++) {
     var inTriples = [],
         outTriples = [];
-    inTriples.push('?a ex:rel' + i + ' ?b.');
-    outTriples.push('?a ex:rel' + (i + 1) + ' ?b.');
+    for (j = 1; j <= (i > 1 ? conditionCount : 1); j++)
+      inTriples.push('?a' + j + ' ex:rel' + i + ' ?b' + j + '.');
+    for (j = 1; j <= conditionCount; j++)
+      outTriples.push('?a' + j + ' ex:rel' + (i + 1) + ' ?b' + j + '.');
     if (i === length)
       outTriples.push('?a ex:relGoal ?b.');
     descriptions.push(generateDescription(inTriples, outTriples));
