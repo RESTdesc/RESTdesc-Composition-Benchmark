@@ -7,32 +7,60 @@ var print = console.log,
 var args = process.argv.splice(2);
 if (args.length < 1)
   return console.error('Insufficient arguments.');
-var runCount = parseInt(args[0], 10);
-var averageCount = 5;
+var maxDescriptionCount = parseInt(args[0], 10);
+var repeats = 5;
 
-var runs = 1;
-nextRound();
+var descriptionCount = 1;
+var results = {};
 
-function nextRound() {
-  runs *= 2;
-  if (runs > runCount)
+var steps = [nextRound];
+executeSteps();
+
+function executeSteps() {
+  var step = steps.shift();
+  if (!step)
     return;
   
-  exec('./generate-descriptions.js ' + runs + ' > /tmp/descriptions.n3', runReasoner);
+  var result = results[step.name];
+  if (!result)
+    results[step.name] = result = [];
+  
+  var time = new Date().getTime();
+  step(function () {
+    result.push(new Date().getTime() - time);
+    executeSteps();
+  });
 }
 
-function runReasoner(times) {
-  times = times || [];
-  var time = new Date().getTime();
-  exec('eye init.ttl /tmp/descriptions.n3 --query goal.n3', function () {
-    times.push(new Date().getTime() - time);
-    if (times.length < averageCount) {
-      runReasoner(times);
-    }
-    else {
-      var average = times.reduce(function(a,b) { return a + b; }) / times.length;
-      console.log(runs + '\t' +  average);
-      nextRound();
-    }
-  });
+function nextRound(callback) {
+  descriptionCount *= 2;
+  if (descriptionCount > maxDescriptionCount)
+    return;
+  results = {};
+  steps.push(generateDescriptions);
+  for (var i = 0; i < repeats; i++)
+    steps.push(createComposition);
+  steps.push(printResults);
+  steps.push(nextRound);
+  callback();
+}
+
+function generateDescriptions(callback) {
+  exec('./generate-descriptions.js ' + descriptionCount + ' > /tmp/descriptions.n3', callback);
+}
+
+function createComposition(callback) {
+  exec('eye init.ttl /tmp/descriptions.n3 --query goal.n3', callback);
+}
+
+function printResults(callback) {
+  print([
+      descriptionCount,
+      avg(results.createComposition)
+    ].join('\t'));
+  callback();
+}
+
+function avg (values) {
+  return values.reduce(function(a,b) { return a + b; }, 0) / values.length;
 }
