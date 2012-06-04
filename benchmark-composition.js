@@ -5,6 +5,9 @@ var print = console.log,
 
 // Parse arguments
 var args = process.argv.splice(2);
+if (args[0] === '--help')
+  return print('usage: benchmark-composition [reasoner] [repeats] [max_descriptions]');
+
 var reasoner = args[0] || "eye";
 var repeats = parseInt(args[1], 10) || 5;
 var maxDescriptionCount = parseInt(args[2], 10) || Math.Infinity;

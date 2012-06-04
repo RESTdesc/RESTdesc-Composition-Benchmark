@@ -4,9 +4,9 @@ var print = console.log;
 
 // Parse arguments
 var args = process.argv.splice(2);
-if (args.length < 1)
-  return console.error('Usage: generate-descriptions.js ' +
-                       'number_of_descriptions> [number_of_conditions] [relation]');
+if (args.length < 1 || args[0] === '--help')
+  return console.log('usage: generate-descriptions.js ' +
+                     'number_of_descriptions [number_of_conditions] [relation]');
 var chainLength = parseInt(args[0], 10);
 var conditionCount = parseInt(args[1], 10) || 1;
 var relation = args[2] || 'rel';
