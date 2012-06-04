@@ -74,6 +74,10 @@ function nextRound(callback) {
     steps.push(parseDescriptionsTwoConditions);
   for (i = 0; i < repeats; i++)
     steps.push(createCompositionTwoConditions);
+  for (i = 0; i < repeats; i++)
+    steps.push(parseDescriptionsThreeConditions);
+  for (i = 0; i < repeats; i++)
+    steps.push(createCompositionThreeConditions);
   steps.push(printResults);
   steps.push(nextRound);
   
@@ -83,9 +87,10 @@ function nextRound(callback) {
 
 // Generates `descriptionCount` descriptions
 function generateDescriptions(callback) {
-  var pending = 2;
+  var pending = 3;
   exec('./generate-descriptions.js ' + descriptionCount + ' 1 > /tmp/descriptions1.n3', next);
   exec('./generate-descriptions.js ' + descriptionCount + ' 2 > /tmp/descriptions2.n3', next);
+  exec('./generate-descriptions.js ' + descriptionCount + ' 3 > /tmp/descriptions3.n3', next);
   
   function next() {
     if(--pending === 0)
@@ -114,9 +119,20 @@ function parseDescriptionsTwoConditions(callback) {
   exec(reasoner + ' /tmp/descriptions2.n3', callback);
 }
 
-// Creates a composition chain of `descriptionCount` descriptions (2 conditions)
+// Creates a composition chain of `descriptionCount` descriptions (two conditions)
 function createCompositionTwoConditions(callback) {
   exec(reasoner + ' initial.ttl /tmp/descriptions2.n3 '
+       + reasonerOptions[reasoner].goal + 'goal.n3', callback);
+}
+
+// Parses `descriptionCount` descriptions (three conditions)
+function parseDescriptionsThreeConditions(callback) {
+  exec(reasoner + ' /tmp/descriptions3.n3', callback);
+}
+
+// Creates a composition chain of `descriptionCount` descriptions (three conditions)
+function createCompositionThreeConditions(callback) {
+  exec(reasoner + ' initial.ttl /tmp/descriptions3.n3 '
        + reasonerOptions[reasoner].goal + 'goal.n3', callback);
 }
 
@@ -130,6 +146,9 @@ function printResults(callback) {
       round(avg(results.parseDescriptionsTwoConditions)),
       round(avg(results.createCompositionTwoConditions)),
       round(avg(results.createCompositionTwoConditions) - avg(results.parseDescriptionsTwoConditions)),
+      round(avg(results.parseDescriptionsThreeConditions)),
+      round(avg(results.createCompositionThreeConditions)),
+      round(avg(results.createCompositionThreeConditions) - avg(results.parseDescriptionsThreeConditions)),
     ].join('\t'));
   callback();
 }
