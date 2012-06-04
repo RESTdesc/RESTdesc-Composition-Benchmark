@@ -6,12 +6,11 @@ var print = console.log,
 // Parse arguments
 var args = process.argv.splice(2);
 var reasoner = args[0] || "eye";
-var maxDescriptionCount = parseInt(args[1], 10) || Math.Infinity;
-
-// Configuration
-var repeats = 5;
+var repeats = parseInt(args[1], 10) || 5;
+var maxDescriptionCount = parseInt(args[2], 10) || Math.Infinity;
 var descriptionCount = 1;
 
+// Reasoner configuration
 var reasonerOptions = {
   eye: {
     goal: '--query ',
