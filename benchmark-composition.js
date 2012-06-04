@@ -26,18 +26,24 @@ var results = {};
 var steps = [nextRound];
 executeSteps();
 
+// Execute the next step, measuring its duration
 function executeSteps() {
+  // Get the next step
   var step = steps.shift();
   if (!step)
     return;
   
+  // Get the current results for this step
   var result = results[step.name];
   if (!result)
     results[step.name] = result = [];
   
+  // Start the step and measure its duration
   var time = new Date().getTime();
   step(function () {
+    // Store the result
     result.push(new Date().getTime() - time);
+    // Continue with the next step
     executeSteps();
   });
 }
@@ -48,14 +54,17 @@ function executeSteps() {
                       ***/
 
 
+// Generates steps for the next benchmark round
 function nextRound(callback) {
   descriptionCount *= 2;
   if (descriptionCount > maxDescriptionCount)
     return;
   
-  var i;
+  // Reset the results.
   results = {};
-  
+
+  // Create new steps
+  var i;
   steps.push(generateDescriptions);
   for (i = 0; i < repeats; i++)
     steps.push(parseDescriptions);
@@ -64,22 +73,27 @@ function nextRound(callback) {
   steps.push(printResults);
   steps.push(nextRound);
   
+  // Execute the steps
   callback();
 }
 
+// Generates `descriptionCount` descriptions
 function generateDescriptions(callback) {
   exec('./generate-descriptions.js ' + descriptionCount + ' > /tmp/descriptions.n3', callback);
 }
 
+// Parses `descriptionCount` descriptions
 function parseDescriptions(callback) {
   exec(reasoner + ' /tmp/descriptions.n3', callback);
 }
 
+// Creates a composition chain of `descriptionCount` descriptions
 function createComposition(callback) {
   exec(reasoner + ' initial.ttl /tmp/descriptions.n3 '
        + reasonerOptions[reasoner].goal + 'goal.n3', callback);
 }
 
+// Prints the results of a benchmark round
 function printResults(callback) {
   print([
       descriptionCount,
@@ -90,10 +104,12 @@ function printResults(callback) {
   callback();
 }
 
+// Returns the average of the values in the array
 function avg (values) {
   return values.reduce(function(a,b) { return a + b; }, 0) / values.length;
 }
 
+// Rounds the value to exactly one decimal place, converting it to a string
 function round(value) {
   return (Math.round(value * 10) + '').replace(/(\d)$/, '.$1');
 }
