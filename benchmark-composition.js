@@ -31,12 +31,15 @@ function executeSteps() {
 }
 
 function nextRound(callback) {
+  var i;
   descriptionCount *= 2;
   if (descriptionCount > maxDescriptionCount)
     return;
   results = {};
   steps.push(generateDescriptions);
-  for (var i = 0; i < repeats; i++)
+  for (i = 0; i < repeats; i++)
+    steps.push(parseDescriptions);
+  for (i = 0; i < repeats; i++)
     steps.push(createComposition);
   steps.push(printResults);
   steps.push(nextRound);
@@ -47,6 +50,10 @@ function generateDescriptions(callback) {
   exec('./generate-descriptions.js ' + descriptionCount + ' > /tmp/descriptions.n3', callback);
 }
 
+function parseDescriptions(callback) {
+  exec('eye /tmp/descriptions.n3', callback);
+}
+
 function createComposition(callback) {
   exec('eye init.ttl /tmp/descriptions.n3 --query goal.n3', callback);
 }
@@ -54,7 +61,9 @@ function createComposition(callback) {
 function printResults(callback) {
   print([
       descriptionCount,
+      round(avg(results.parseDescriptions)),
       round(avg(results.createComposition)),
+      round(avg(results.createComposition) - avg(results.parseDescriptions)),
     ].join('\t'));
   callback();
 }
