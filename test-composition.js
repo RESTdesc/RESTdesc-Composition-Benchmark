@@ -10,14 +10,15 @@ if (args.length < 1)
 var runCount = parseInt(args[0], 10);
 var averageCount = 5;
 
-var run = 0;
-nextRun();
+var runs = 1;
+nextRound();
 
-function nextRun() {
-  if (++run > runCount)
+function nextRound() {
+  runs *= 2;
+  if (runs > runCount)
     return;
   
-  exec('./generate-descriptions.js ' + run + ' > /tmp/descriptions.n3', runReasoner); 
+  exec('./generate-descriptions.js ' + runs + ' > /tmp/descriptions.n3', runReasoner);
 }
 
 function runReasoner(times) {
@@ -30,8 +31,8 @@ function runReasoner(times) {
     }
     else {
       var average = times.reduce(function(a,b) { return a + b; }) / times.length;
-      console.log(run + '\t' +  average);
-      nextRun();
+      console.log(runs + '\t' +  average);
+      nextRound();
     }
   });
 }
