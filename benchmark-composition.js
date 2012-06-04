@@ -135,7 +135,7 @@ function parseDescriptionsTwoConditions(callback) {
 // Creates a composition chain of `descriptionCount` descriptions (two conditions)
 function createCompositionTwoConditions(callback) {
   exec(reasoner + ' initial.ttl /tmp/descriptions2.n3 '
-       + reasonerOptions[reasoner].goal + 'goal.n3 ' +
+       + reasonerOptions[reasoner].goal + 'goal.n3 '
        + reasonerOptions[reasoner].proof, callback);
 }
 
@@ -159,7 +159,7 @@ function parseDescriptionsWithDummies(callback) {
 // Creates a composition chain in presence of `descriptionCount` dummies
 function createCompositionWithDummies(callback) {
   exec(reasoner + ' initial.ttl /tmp/32descriptions.n3 /tmp/dummy.n3 '
-       + reasonerOptions[reasoner].goal + 'goal.n3 ' +
+       + reasonerOptions[reasoner].goal + 'goal.n3 '
        + reasonerOptions[reasoner].proof, callback);
 }
 
