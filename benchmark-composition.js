@@ -14,10 +14,12 @@ var descriptionCount = 1;
 
 var reasonerOptions = {
   eye: {
-    goal: '--query '
+    goal: '--query ',
+    proof: ''
   },
   cwm: {
-    goal: '--think --filter='
+    goal: '--think --filter=',
+    proof: '--why'
   }
 }
 
@@ -111,7 +113,8 @@ function parseDescriptions(callback) {
 // Creates a composition chain of `descriptionCount` descriptions
 function createComposition(callback) {
   exec(reasoner + ' initial.ttl /tmp/descriptions1.n3 '
-       + reasonerOptions[reasoner].goal + 'goal.n3', callback);
+       + reasonerOptions[reasoner].goal + 'goal.n3 '
+       + reasonerOptions[reasoner].proof, callback);
 }
 
 // Parses `descriptionCount` descriptions (two conditions)
@@ -122,7 +125,8 @@ function parseDescriptionsTwoConditions(callback) {
 // Creates a composition chain of `descriptionCount` descriptions (two conditions)
 function createCompositionTwoConditions(callback) {
   exec(reasoner + ' initial.ttl /tmp/descriptions2.n3 '
-       + reasonerOptions[reasoner].goal + 'goal.n3', callback);
+       + reasonerOptions[reasoner].goal + 'goal.n3 ' +
+       + reasonerOptions[reasoner].proof, callback);
 }
 
 // Parses `descriptionCount` descriptions (three conditions)
@@ -133,7 +137,8 @@ function parseDescriptionsThreeConditions(callback) {
 // Creates a composition chain of `descriptionCount` descriptions (three conditions)
 function createCompositionThreeConditions(callback) {
   exec(reasoner + ' initial.ttl /tmp/descriptions3.n3 '
-       + reasonerOptions[reasoner].goal + 'goal.n3', callback);
+       + reasonerOptions[reasoner].goal + 'goal.n3 '
+       + reasonerOptions[reasoner].proof, callback);
 }
 
 // Prints the results of a benchmark round
