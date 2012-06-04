@@ -5,11 +5,21 @@ var print = console.log,
 
 // Parse arguments
 var args = process.argv.splice(2);
-var maxDescriptionCount = parseInt(args[0], 10) || Math.Infinity;
+var reasoner = args[0] || "eye";
+var maxDescriptionCount = parseInt(args[1], 10) || Math.Infinity;
 
 // Configuration
 var repeats = 5;
 var descriptionCount = 1;
+
+var reasonerOptions = {
+  eye: {
+    goal: '--query '
+  },
+  cwm: {
+    goal: '--think --filter='
+  }
+}
 
 // Asynchronous step executor
 var results = {};
@@ -62,11 +72,12 @@ function generateDescriptions(callback) {
 }
 
 function parseDescriptions(callback) {
-  exec('eye /tmp/descriptions.n3', callback);
+  exec(reasoner + ' /tmp/descriptions.n3', callback);
 }
 
 function createComposition(callback) {
-  exec('eye init.ttl /tmp/descriptions.n3 --query goal.n3', callback);
+  exec(reasoner + ' initial.ttl /tmp/descriptions.n3 '
+       + reasonerOptions[reasoner].goal + 'goal.n3', callback);
 }
 
 function printResults(callback) {
