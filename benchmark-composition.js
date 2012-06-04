@@ -23,7 +23,7 @@ var reasonerOptions = {
 
 // Asynchronous step executor
 var results = {};
-var steps = [nextRound];
+var steps = [dryRun, nextRound];
 executeSteps();
 
 // Execute the next step, measuring its duration
@@ -80,6 +80,11 @@ function nextRound(callback) {
 // Generates `descriptionCount` descriptions
 function generateDescriptions(callback) {
   exec('./generate-descriptions.js ' + descriptionCount + ' > /tmp/descriptions.n3', callback);
+}
+
+// Dry reasoner run (to calibrate)
+function dryRun(callback) {
+  exec(reasoner, callback);
 }
 
 // Parses `descriptionCount` descriptions
