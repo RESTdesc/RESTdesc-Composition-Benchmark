@@ -13,7 +13,8 @@ var relation = args[2] || 'rel';
 
 // Output prefixes
 var prefixes = {
-  'ex': 'http://example.org/#'
+  'ex': 'http://example.org/#',
+  'http': 'http://www.w3.org/2011/http#'
 };
 for (var prefix in prefixes)
   print('@prefix ' + prefix + ': <' + prefixes[prefix] + '>.');
@@ -31,10 +32,13 @@ function generateDescriptionChain(length) {
         outTriples = [];
     for (j = 1; j <= (i > 1 ? conditionCount : 1); j++)
       inTriples.push('?a' + j + ' ex:' + relation + i + ' ?b' + j + '.');
+    outTriples.push('_:request http:methodName "GET";');
+    outTriples.push('          http:requestURI ?a1;');
+    outTriples.push('          http:resp [ http:body ?b1 ].');
     for (j = 1; j <= conditionCount; j++)
       outTriples.push('?a' + j + ' ex:' + relation + (i + 1) + ' ?b' + j + '.');
     if (i === length)
-      outTriples.push('?a ex:relGoal ?b.');
+      outTriples.push('?a1 ex:relGoal ?b1.');
     descriptions.push(generateDescription(inTriples, outTriples));
   }
   return descriptions;
