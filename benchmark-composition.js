@@ -84,7 +84,7 @@ function generateDescriptions(callback) {
 
 // Dry reasoner run (to calibrate)
 function dryRun(callback) {
-  exec(reasoner, callback);
+  exec(reasoner + ' --help', callback);
 }
 
 // Parses `descriptionCount` descriptions
