@@ -70,6 +70,10 @@ function nextRound(callback) {
     steps.push(parseDescriptions);
   for (i = 0; i < repeats; i++)
     steps.push(createComposition);
+  for (i = 0; i < repeats; i++)
+    steps.push(parseDescriptionsTwoConditions);
+  for (i = 0; i < repeats; i++)
+    steps.push(createCompositionTwoConditions);
   steps.push(printResults);
   steps.push(nextRound);
   
@@ -79,7 +83,14 @@ function nextRound(callback) {
 
 // Generates `descriptionCount` descriptions
 function generateDescriptions(callback) {
-  exec('./generate-descriptions.js ' + descriptionCount + ' > /tmp/descriptions.n3', callback);
+  var pending = 2;
+  exec('./generate-descriptions.js ' + descriptionCount + ' 1 > /tmp/descriptions1.n3', next);
+  exec('./generate-descriptions.js ' + descriptionCount + ' 2 > /tmp/descriptions2.n3', next);
+  
+  function next() {
+    if(--pending === 0)
+      callback();
+  }
 }
 
 // Dry reasoner run (to calibrate)
@@ -89,12 +100,23 @@ function dryRun(callback) {
 
 // Parses `descriptionCount` descriptions
 function parseDescriptions(callback) {
-  exec(reasoner + ' /tmp/descriptions.n3', callback);
+  exec(reasoner + ' /tmp/descriptions1.n3', callback);
 }
 
 // Creates a composition chain of `descriptionCount` descriptions
 function createComposition(callback) {
-  exec(reasoner + ' initial.ttl /tmp/descriptions.n3 '
+  exec(reasoner + ' initial.ttl /tmp/descriptions1.n3 '
+       + reasonerOptions[reasoner].goal + 'goal.n3', callback);
+}
+
+// Parses `descriptionCount` descriptions (two conditions)
+function parseDescriptionsTwoConditions(callback) {
+  exec(reasoner + ' /tmp/descriptions2.n3', callback);
+}
+
+// Creates a composition chain of `descriptionCount` descriptions (2 conditions)
+function createCompositionTwoConditions(callback) {
+  exec(reasoner + ' initial.ttl /tmp/descriptions2.n3 '
        + reasonerOptions[reasoner].goal + 'goal.n3', callback);
 }
 
@@ -105,6 +127,9 @@ function printResults(callback) {
       round(avg(results.parseDescriptions)),
       round(avg(results.createComposition)),
       round(avg(results.createComposition) - avg(results.parseDescriptions)),
+      round(avg(results.parseDescriptionsTwoConditions)),
+      round(avg(results.createCompositionTwoConditions)),
+      round(avg(results.createCompositionTwoConditions) - avg(results.parseDescriptionsTwoConditions)),
     ].join('\t'));
   callback();
 }
