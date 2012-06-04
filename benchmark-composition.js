@@ -6,11 +6,13 @@ var print = console.log,
 // Parse arguments
 var args = process.argv.splice(2);
 var maxDescriptionCount = parseInt(args[0], 10) || Math.Infinity;
+
+// Configuration
 var repeats = 5;
-
 var descriptionCount = 1;
-var results = {};
 
+// Asynchronous step executor
+var results = {};
 var steps = [nextRound];
 executeSteps();
 
@@ -30,12 +32,20 @@ function executeSteps() {
   });
 }
 
+
+/***
+          STEPS
+                      ***/
+
+
 function nextRound(callback) {
-  var i;
   descriptionCount *= 2;
   if (descriptionCount > maxDescriptionCount)
     return;
+  
+  var i;
   results = {};
+  
   steps.push(generateDescriptions);
   for (i = 0; i < repeats; i++)
     steps.push(parseDescriptions);
@@ -43,6 +53,7 @@ function nextRound(callback) {
     steps.push(createComposition);
   steps.push(printResults);
   steps.push(nextRound);
+  
   callback();
 }
 
