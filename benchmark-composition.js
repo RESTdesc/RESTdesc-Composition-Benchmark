@@ -168,17 +168,17 @@ function printResults(callback) {
   print([
       descriptionCount,
       round(avg(results.parseDescriptions)),
-      round(avg(results.createComposition)),
       round(avg(results.createComposition) - avg(results.parseDescriptions)),
+      round(avg(results.createComposition)),
       round(avg(results.parseDescriptionsTwoConditions)),
-      round(avg(results.createCompositionTwoConditions)),
       round(avg(results.createCompositionTwoConditions) - avg(results.parseDescriptionsTwoConditions)),
+      round(avg(results.createCompositionTwoConditions)),
       round(avg(results.parseDescriptionsThreeConditions)),
-      round(avg(results.createCompositionThreeConditions)),
       round(avg(results.createCompositionThreeConditions) - avg(results.parseDescriptionsThreeConditions)),
+      round(avg(results.createCompositionThreeConditions)),
       round(avg(results.parseDescriptionsWithDummies)),
-      round(avg(results.createCompositionWithDummies)),
       round(avg(results.createCompositionWithDummies) - avg(results.parseDescriptionsWithDummies)),      
+      round(avg(results.createCompositionWithDummies)),
     ].join('\t'));
   callback();
 }
