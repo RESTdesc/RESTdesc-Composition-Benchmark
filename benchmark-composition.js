@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 var print = console.log,
-    exec = require('child_process').exec;
+    exec = require('child_process').exec,
+    fs = require('fs');
 
 // Parse arguments
 var args = process.argv.splice(2);
@@ -11,6 +12,7 @@ if (args[0] === '--help')
 var reasoner = args[0] || "eye";
 var repeats = parseInt(args[1], 10) || 5;
 var maxDescriptionCount = parseInt(args[2], 10) || Infinity;
+var path = "/tmp/benchmark-composition-" + process.pid + '/';
 var descriptionCount = 1;
 
 print(reasoner, 'maximum', maxDescriptionCount, 'descriptions with', repeats, 'repeats');
@@ -26,6 +28,7 @@ var reasonerOptions = {
     proof: '--why'
   }
 }
+fs.mkdirSync(path);
 
 // Asynchronous step executor
 var results = {};
@@ -98,11 +101,11 @@ function nextRound(callback) {
 // Generates `descriptionCount` descriptions
 function generateDescriptions(callback) {
   var pending = 5;
-  exec('./generate-descriptions.js ' + descriptionCount + ' 1 > /tmp/descriptions1.n3', next);
-  exec('./generate-descriptions.js ' + descriptionCount + ' 2 > /tmp/descriptions2.n3', next);
-  exec('./generate-descriptions.js ' + descriptionCount + ' 3 > /tmp/descriptions3.n3', next);
-  exec('./generate-descriptions.js 32 > /tmp/32descriptions.n3', next);
-  exec('./generate-descriptions.js ' + descriptionCount + ' 1 dummy > /tmp/dummy.n3', next);
+  exec('./generate-descriptions.js ' + descriptionCount + ' 1 > ' + path + 'descriptions1.n3', next);
+  exec('./generate-descriptions.js ' + descriptionCount + ' 2 > ' + path + 'descriptions2.n3', next);
+  exec('./generate-descriptions.js ' + descriptionCount + ' 3 > ' + path + 'descriptions3.n3', next);
+  exec('./generate-descriptions.js 32 > ' + path + '32descriptions.n3', next);
+  exec('./generate-descriptions.js ' + descriptionCount + ' 1 dummy > ' + path + 'dummy.n3', next);
   
   function next() {
     if(--pending === 0)
@@ -117,48 +120,48 @@ function dryRun(callback) {
 
 // Parses `descriptionCount` descriptions
 function parseDescriptions(callback) {
-  exec(reasoner + ' /tmp/descriptions1.n3', callback);
+  exec(reasoner + ' ' + path + 'descriptions1.n3', callback);
 }
 
 // Creates a composition chain of `descriptionCount` descriptions
 function createComposition(callback) {
-  exec(reasoner + ' initial.ttl /tmp/descriptions1.n3 '
+  exec(reasoner + ' initial.ttl ' + path + 'descriptions1.n3 '
        + reasonerOptions[reasoner].goal + 'goal.n3 '
        + reasonerOptions[reasoner].proof, callback);
 }
 
 // Parses `descriptionCount` descriptions (two conditions)
 function parseDescriptionsTwoConditions(callback) {
-  exec(reasoner + ' /tmp/descriptions2.n3', callback);
+  exec(reasoner + ' ' + path + 'descriptions2.n3', callback);
 }
 
 // Creates a composition chain of `descriptionCount` descriptions (two conditions)
 function createCompositionTwoConditions(callback) {
-  exec(reasoner + ' initial.ttl /tmp/descriptions2.n3 '
+  exec(reasoner + ' initial.ttl ' + path + 'descriptions2.n3 '
        + reasonerOptions[reasoner].goal + 'goal.n3 '
        + reasonerOptions[reasoner].proof, callback);
 }
 
 // Parses `descriptionCount` descriptions (three conditions)
 function parseDescriptionsThreeConditions(callback) {
-  exec(reasoner + ' /tmp/descriptions3.n3', callback);
+  exec(reasoner + ' ' + path + 'descriptions3.n3', callback);
 }
 
 // Creates a composition chain of `descriptionCount` descriptions (three conditions)
 function createCompositionThreeConditions(callback) {
-  exec(reasoner + ' initial.ttl /tmp/descriptions3.n3 '
+  exec(reasoner + ' initial.ttl ' + path + 'descriptions3.n3 '
        + reasonerOptions[reasoner].goal + 'goal.n3 '
        + reasonerOptions[reasoner].proof, callback);
 }
 
 // Parses descriptions in presence of `descriptionCount` dummies
 function parseDescriptionsWithDummies(callback) {
-  exec(reasoner + ' /tmp/32descriptions.n3 /tmp/dummy.n3', callback);
+  exec(reasoner + ' ' + path + '32descriptions.n3 ' + path + 'dummy.n3', callback);
 }
 
 // Creates a composition chain in presence of `descriptionCount` dummies
 function createCompositionWithDummies(callback) {
-  exec(reasoner + ' initial.ttl /tmp/32descriptions.n3 /tmp/dummy.n3 '
+  exec(reasoner + ' initial.ttl ' + path + '32descriptions.n3 ' + path + 'dummy.n3 '
        + reasonerOptions[reasoner].goal + 'goal.n3 '
        + reasonerOptions[reasoner].proof, callback);
 }
