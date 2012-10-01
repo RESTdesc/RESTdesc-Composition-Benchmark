@@ -41,12 +41,12 @@ function executeSteps() {
   var step = steps.shift();
   if (!step)
     return;
-  
+
   // Get the current results for this step
   var result = results[step.name];
   if (!result)
     results[step.name] = result = [];
-  
+
   // Start the step and measure its duration
   var time = new Date().getTime();
   step(function () {
@@ -68,7 +68,7 @@ function nextRound(callback) {
   descriptionCount *= 2;
   if (descriptionCount > maxDescriptionCount)
     return;
-  
+
   // Reset the results.
   results = {};
 
@@ -93,7 +93,7 @@ function nextRound(callback) {
     steps.push(createCompositionWithDummies);
   steps.push(printResults);
   steps.push(nextRound);
-  
+
   // Execute the steps
   callback();
 }
@@ -106,7 +106,7 @@ function generateDescriptions(callback) {
   exec('./generate-descriptions.js ' + descriptionCount + ' 3 > ' + path + 'descriptions3.n3', next);
   exec('./generate-descriptions.js 32 > ' + path + '32descriptions.n3', next);
   exec('./generate-descriptions.js ' + descriptionCount + ' 1 dummy > ' + path + 'dummy.n3', next);
-  
+
   function next() {
     if(--pending === 0)
       callback();
@@ -180,7 +180,7 @@ function printResults(callback) {
       round(avg(results.createCompositionThreeConditions) - avg(results.parseDescriptionsThreeConditions)),
       round(avg(results.createCompositionThreeConditions)),
       round(avg(results.parseDescriptionsWithDummies)),
-      round(avg(results.createCompositionWithDummies) - avg(results.parseDescriptionsWithDummies)),      
+      round(avg(results.createCompositionWithDummies) - avg(results.parseDescriptionsWithDummies)),
       round(avg(results.createCompositionWithDummies)),
     ].join('\t'));
   callback();
