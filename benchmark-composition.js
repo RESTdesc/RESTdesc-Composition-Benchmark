@@ -2,7 +2,8 @@
 
 var print = console.log,
     child_process = require('child_process'),
-    fs = require('fs');
+    fs = require('fs'),
+    os = require('os');
 
 // Parse arguments
 var args = process.argv.splice(2);
@@ -12,7 +13,7 @@ if (args[0] === '--help')
 var reasoner = args[0] || "eye";
 var repeats = parseInt(args[1], 10) || 5;
 var maxDescriptionCount = parseInt(args[2], 10) || Infinity;
-var path = "/tmp/benchmark-composition-" + process.pid + '/';
+var path = os.tmpDir() + "/benchmark-composition-" + process.pid + '/';
 var descriptionCount = 1;
 
 print(reasoner, 'maximum', maxDescriptionCount, 'descriptions with', repeats, 'repeats');
