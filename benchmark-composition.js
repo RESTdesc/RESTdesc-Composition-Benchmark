@@ -101,6 +101,10 @@ function exec(command, callback) {
           STEPS
                       ***/
 
+var benchmarkSteps = [parseDescriptions, createComposition,
+                      parseDescriptionsTwoConditions, createCompositionTwoConditions,
+                      parseDescriptionsThreeConditions, createCompositionThreeConditions,
+                      parseDescriptionsWithDummies, createCompositionWithDummies];
 
 // Generates steps for the next benchmark round
 function nextRound(callback) {
@@ -112,24 +116,10 @@ function nextRound(callback) {
   results = {};
 
   // Create new steps
-  var i;
   steps.push(generateDescriptions);
-  for (i = 0; i < repeats; i++)
-    steps.push(parseDescriptions);
-  for (i = 0; i < repeats; i++)
-    steps.push(createComposition);
-  for (i = 0; i < repeats; i++)
-    steps.push(parseDescriptionsTwoConditions);
-  for (i = 0; i < repeats; i++)
-    steps.push(createCompositionTwoConditions);
-  for (i = 0; i < repeats; i++)
-    steps.push(parseDescriptionsThreeConditions);
-  for (i = 0; i < repeats; i++)
-    steps.push(createCompositionThreeConditions);
-  for (i = 0; i < repeats; i++)
-    steps.push(parseDescriptionsWithDummies);
-  for (i = 0; i < repeats; i++)
-    steps.push(createCompositionWithDummies);
+  for(var step = 0; step < benchmarkSteps.length; step++)
+    for (var i = 0; i < repeats; i++)
+      steps.push(benchmarkSteps[step]);
   steps.push(printResults);
   steps.push(nextRound);
 
