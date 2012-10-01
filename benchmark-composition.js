@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var print = console.log,
-    exec = require('child_process').exec,
+    child_process = require('child_process'),
     fs = require('fs');
 
 // Parse arguments
@@ -48,12 +48,33 @@ function executeSteps() {
     results[step.name] = result = [];
 
   // Start the step and measure its duration
-  var time = new Date().getTime();
-  step(function () {
-    // Store the result
-    result.push(new Date().getTime() - time);
-    // Continue with the next step
+  step(function (error, duration) {
+    if (error)
+      throw error;
+    // Store the result and continue with the next step
+    result.push(duration);
     executeSteps();
+  });
+}
+
+// Execute the command in a new process, returning its duration
+function exec(command, callback) {
+  // Set options according to platform, and ignore output
+  var shell, args;
+  if (process.platform === 'win32') {
+    shell = 'cmd.exe';
+    args = ['/s', '/c', '"' + command + ' > NUL"'];
+  }
+  else {
+    shell = '/bin/sh';
+    args = ['-c', command + ' > /dev/null'];
+  }
+
+  // Start the process
+  var startTime = new Date().getTime();
+  var child = child_process.spawn(shell, args, { 'stdio': 'ignore' });
+  child.addListener('exit', function (error) {
+    callback(error, new Date().getTime() - startTime);
   });
 }
 
