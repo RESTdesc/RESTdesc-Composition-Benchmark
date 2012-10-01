@@ -64,6 +64,7 @@ function exec(command, callback) {
   if (process.platform === 'win32') {
     shell = 'cmd.exe';
     args = ['/s', '/c', '"' + command + '"'];
+    options.windowsVerbatimArguments = true;
   }
   else {
     shell = '/bin/sh';
