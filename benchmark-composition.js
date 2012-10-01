@@ -79,7 +79,7 @@ function exec(command, callback) {
       child = child_process.spawn(shell, args, options);
   // Log duration on exit
   child.addListener('exit', function (error) {
-    callback(error, new Date().getTime() - startTime);
+    callback(error ? err : null, new Date().getTime() - startTime);
   });
   // Stop if stdout has sufficient characters to prove termination
   child.stdout.setEncoding('utf8');
