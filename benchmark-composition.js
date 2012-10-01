@@ -60,21 +60,37 @@ function executeSteps() {
 // Execute the command in a new process, returning its duration
 function exec(command, callback) {
   // Set options according to platform, and ignore output
-  var shell, args;
+  var shell, args, options = {};
   if (process.platform === 'win32') {
     shell = 'cmd.exe';
-    args = ['/s', '/c', '"' + command + ' > NUL"'];
+    args = ['/s', '/c', '"' + command + '"'];
   }
   else {
     shell = '/bin/sh';
-    args = ['-c', command + ' > /dev/null'];
+    args = ['-c', command];
   }
 
   // Start the process
-  var startTime = new Date().getTime();
-  var child = child_process.spawn(shell, args, { 'stdio': 'ignore' });
+  var err = '',
+      limit = 1024,
+      length = 0,
+      startTime = new Date().getTime(),
+      child = child_process.spawn(shell, args, options);
+  // Log duration on exit
   child.addListener('exit', function (error) {
     callback(error, new Date().getTime() - startTime);
+  });
+  // Stop if stdout has sufficient characters to prove termination
+  child.stdout.setEncoding('utf8');
+  child.stdout.addListener('data', function (chunk) {
+    length += chunk.length;
+    if (length > limit)
+      child.kill();
+  });
+  // Log possible errors
+  child.stderr.setEncoding('utf8');
+  child.stderr.addListener('data', function (chunk) {
+    err += chunk;
   });
 }
 
