@@ -74,7 +74,7 @@ function exec(command, callback) {
 
   // Start the process
   var err = '',
-      limit = 1024,
+      limit = 4096,
       length = 0,
       startTime = new Date().getTime(),
       child = child_process.spawn(shell, args, options);
