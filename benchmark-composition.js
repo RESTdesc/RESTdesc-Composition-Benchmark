@@ -117,7 +117,7 @@ function nextRound(callback) {
 
   // Create new steps
   steps.push(generateDescriptions);
-  for(var step = 0; step < benchmarkSteps.length; step++)
+  for (var step = 0; step < benchmarkSteps.length; step++)
     for (var i = 0; i < repeats; i++)
       steps.push(benchmarkSteps[step]);
   steps.push(printResults);
@@ -138,7 +138,7 @@ function generateDescriptions(callback) {
   ];
 
   function next() {
-    if(!descriptions.length)
+    if (!descriptions.length)
       return callback();
     exec('./generate-descriptions.js ' + descriptions.pop(), next);
   }
