@@ -140,7 +140,7 @@ function generateDescriptions(callback) {
   function next() {
     if (!descriptions.length)
       return callback();
-    exec('./generate-descriptions.js ' + descriptions.pop(), next);
+    exec(process.argv[0] + ' generate-descriptions.js ' + descriptions.pop(), next);
   }
   next();
 }
