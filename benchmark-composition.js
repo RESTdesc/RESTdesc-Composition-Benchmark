@@ -129,17 +129,20 @@ function nextRound(callback) {
 
 // Generates `descriptionCount` descriptions
 function generateDescriptions(callback) {
-  var pending = 5;
-  exec('./generate-descriptions.js ' + descriptionCount + ' 1 > ' + path + 'descriptions1.n3', next);
-  exec('./generate-descriptions.js ' + descriptionCount + ' 2 > ' + path + 'descriptions2.n3', next);
-  exec('./generate-descriptions.js ' + descriptionCount + ' 3 > ' + path + 'descriptions3.n3', next);
-  exec('./generate-descriptions.js 32 > ' + path + '32descriptions.n3', next);
-  exec('./generate-descriptions.js ' + descriptionCount + ' 1 dummy > ' + path + 'dummy.n3', next);
+  var descriptions = [
+    descriptionCount + ' 1 > ' + path + 'descriptions1.n3',
+    descriptionCount + ' 2 > ' + path + 'descriptions2.n3',
+    descriptionCount + ' 3 > ' + path + 'descriptions3.n3',
+    '32 > ' + path + '32descriptions.n3',
+    descriptionCount + ' 1 dummy > ' + path + 'dummy.n3',
+  ];
 
   function next() {
-    if(--pending === 0)
-      callback();
+    if(!descriptions.length)
+      return callback();
+    exec('./generate-descriptions.js ' + descriptions.pop(), next);
   }
+  next();
 }
 
 // Dry reasoner run (to calibrate)
