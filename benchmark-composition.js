@@ -200,21 +200,28 @@ function createCompositionWithDummies(callback) {
 
 // Prints the results of a benchmark round
 function printResults(callback) {
-  print([
-      descriptionCount,
-      round(avg(results.parseDescriptions)),
-      round(avg(results.createComposition) - avg(results.parseDescriptions)),
-      round(avg(results.createComposition)),
-      round(avg(results.parseDescriptionsTwoConditions)),
-      round(avg(results.createCompositionTwoConditions) - avg(results.parseDescriptionsTwoConditions)),
-      round(avg(results.createCompositionTwoConditions)),
-      round(avg(results.parseDescriptionsThreeConditions)),
-      round(avg(results.createCompositionThreeConditions) - avg(results.parseDescriptionsThreeConditions)),
-      round(avg(results.createCompositionThreeConditions)),
-      round(avg(results.parseDescriptionsWithDummies)),
-      round(avg(results.createCompositionWithDummies) - avg(results.parseDescriptionsWithDummies)),
-      round(avg(results.createCompositionWithDummies)),
-    ].join('\t'));
+  // Prepend averages to numerical data
+  for (var type in results)
+    if (typeof results[type][0] === 'number')
+      results[type].unshift(avg(results[type]));
+
+  // Print averages, followed by individual runs
+  for (var i = 0, l = results.createComposition.length; i < l; i++)
+    print([
+        i === 0 ? descriptionCount + ' (AVG)' : '-',
+        round(results.parseDescriptions[i]),
+        round(results.createComposition[i] - results.parseDescriptions[i]),
+        round(results.createComposition[i]),
+        round(results.parseDescriptionsTwoConditions[i]),
+        round(results.createCompositionTwoConditions[i] - results.parseDescriptionsTwoConditions[i]),
+        round(results.createCompositionTwoConditions[i]),
+        round(results.parseDescriptionsThreeConditions[i]),
+        round(results.createCompositionThreeConditions[i] - results.parseDescriptionsThreeConditions[i]),
+        round(results.createCompositionThreeConditions[i]),
+        round(results.parseDescriptionsWithDummies[i]),
+        round(results.createCompositionWithDummies[i] - results.parseDescriptionsWithDummies[i]),
+        round(results.createCompositionWithDummies[i]),
+      ].join('\t'));
   callback();
 }
 
