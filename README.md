@@ -7,10 +7,10 @@ when creating compositions of RESTdesc descriptions.
 ## Instructions
 To start the benchmark for the [EYE](http://eulersharp.sourceforge.net/) reasoner
 with up to 1024 descriptions and 10 trials each,
-run the following command:
+run the following command (with [Node.js](http://nodejs.org/) >= 0.10):
 
 ```bash
-$ ./benchmark-composition eye 10 1024
+$ node benchmark-composition eye 10 1024
 ```
 
 Currently supported reasoners are [EYE](http://eulersharp.sourceforge.net/)
